@@ -1,0 +1,21 @@
+{
+  "name": "farmus-wallet-backend",
+  "version": "1.0.0",
+  "description": "Backend for handling wallet transactions for Farmus app using Vercel serverless functions",
+  "scripts": {
+    "start": "vercel dev",
+    "deploy": "vercel"
+  },
+  "dependencies": {
+    "axios": "^1.5.0",
+    "dotenv": "^16.0.3",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^7.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  },
+  "author": "Nyamwe Cliff Jansen",
+  "license": "MIT",
+  "keywords": []
+}
