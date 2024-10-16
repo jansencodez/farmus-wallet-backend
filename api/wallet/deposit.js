@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import connectDB from '../../config/db';
 import authenticateToken from '../../middleware/authenticateToken'; // Assuming you use a custom JWT auth middleware
-import User from '../../models/User';
+import User from '../../models/user';
 
 export default async function handler(req, res) {
   await connectDB(); // Ensure the database connection

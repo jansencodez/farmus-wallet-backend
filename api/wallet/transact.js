@@ -1,6 +1,6 @@
 import connectDB from '../../config/db';
 import authenticateToken from '../../middleware/authenticateToken';
-import User from '../../models/User';
+import User from '../../models/user';
 
 export default async function handler(req, res) {
   await connectDB; // Ensure the database connection
