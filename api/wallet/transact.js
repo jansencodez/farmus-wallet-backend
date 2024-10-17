@@ -1,9 +1,10 @@
 import connectDB from '../../config/db';
 import authenticateToken from '../../middleware/authenticateToken';
 import User from '../../models/user';
+// You may want to import a Product model if you have one to check item availability
 
 export default async function handler(req, res) {
-  await connectDB; // Ensure the database connection
+  await connectDB(); // Ensure the database connection
 
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' });
@@ -27,9 +28,15 @@ export default async function handler(req, res) {
       }
 
       // Check if the buyer has sufficient balance
-      if (buyer.walletBalance < amount) {
+      if (parseFloat(buyer.walletBalance) < parseFloat(amount)) {
         return res.status(400).json({ message: 'Insufficient balance' });
       }
+
+      // Here you can check if the product is available (if applicable)
+      // const product = await Product.findById(itemId);
+      // if (!product || !product.isAvailable) {
+      //   return res.status(400).json({ message: 'Product not available' });
+      // }
 
       // Process the transaction
       buyer.walletBalance = (parseFloat(buyer.walletBalance) - parseFloat(amount)).toFixed(2);
@@ -38,6 +45,9 @@ export default async function handler(req, res) {
       // Save updated balances
       await buyer.save();
       await seller.save();
+
+      // Optionally log the transaction here for auditing purposes
+      // await Transaction.create({ itemId, buyerId: buyer._id, sellerId: seller._id, amount });
 
       // Return success response
       res.status(200).json({
