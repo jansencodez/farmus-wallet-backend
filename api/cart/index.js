@@ -3,16 +3,25 @@ import connectDB from "../../config/db";
 import { Cart } from "../../models/user";
 
 export default async function handler(req, res) {
-  const { id: userId } = req.query;
+  const userId = req.query.id;
+
+  if (!userId) {
+    return res
+      .status(400)
+      .json({ success: false, message: "User ID is required" });
+  }
 
   await connectDB();
 
   if (req.method === "GET") {
     try {
       const cart = await Cart.findOne({ userId }).populate("items.productId");
-      res.status(200).json(cart || { items: [] });
+      res.status(200).json({ success: true, items: cart ? cart.items : [] });
     } catch (error) {
-      res.status(500).json({ message: "Error retrieving cart", error });
+      console.error("Error retrieving cart:", error);
+      res
+        .status(500)
+        .json({ success: false, message: "Error retrieving cart", error });
     }
   } else {
     res.setHeader("Allow", ["GET"]);
