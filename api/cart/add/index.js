@@ -33,7 +33,7 @@ export default async function handler(req, res) {
 
       // Save the cart back to the database
       await cart.save();
-
+      await User.findByIdAndUpdate(userId, { cart: cart._id }, { new: true });
       res.status(201).json(cart); // Return the updated cart
     } catch (error) {
       console.error("Error adding item to cart:", error); // Log the error for debugging
