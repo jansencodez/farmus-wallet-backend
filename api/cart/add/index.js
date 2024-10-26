@@ -1,5 +1,5 @@
 // api/cart/[userId]/add.js
-import connectDB from "../../../lib/db";
+import connectDB from "../../../config/db";
 import Cart from "../../../models/Cart";
 
 export default async function handler(req, res) {
