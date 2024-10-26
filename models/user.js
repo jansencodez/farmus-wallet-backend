@@ -27,6 +27,10 @@ const CartSchema = new mongoose.Schema({
         default: 1,
         min: 0, // Ensure quantity cannot be negative
       },
+      price: {
+        type: mongoose.Schema.Types.Decimal128,
+        required: true, // Price is required for each item
+      },
     },
   ],
 });
