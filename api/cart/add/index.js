@@ -1,10 +1,12 @@
 import connectDB from "../../../config/db";
 import Cart from "../../../models/Cart";
-import User from "../../../models/user";
+import User from "../../../models/User"; // Ensure case matches your file name
+
 export default async function handler(req, res) {
   const { id: userId } = req.query; // Use `id` as per your query parameter
 
   await connectDB();
+  console.log("Database connected successfully");
 
   if (req.method === "POST") {
     try {
@@ -32,8 +34,15 @@ export default async function handler(req, res) {
       }
 
       // Save the cart back to the database
-
       await cart.save();
+
+      // Check if the user exists
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Update the user with the cart ID
       await User.findByIdAndUpdate(userId, { cart: cart._id }, { new: true });
       res.status(201).json(cart); // Return the updated cart
     } catch (error) {
