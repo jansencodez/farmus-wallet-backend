@@ -8,18 +8,43 @@ const TransactionSchema = new mongoose.Schema({
   description: { type: String },
 });
 
+const CartSchema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
+  items: [
+    {
+      productId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product",
+        required: true,
+      },
+      quantity: {
+        type: Number,
+        required: true,
+        default: 1,
+        min: 0, // Ensure quantity cannot be negative
+      },
+    },
+  ],
+});
+
 const UserSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   resetPasswordToken: String,
   resetPasswordExpires: Date,
-  profilePicture: { type: String }, // Add this field to store the path to the profile picture
+  profilePicture: { type: String },
   products: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
   walletBalance: { type: mongoose.Schema.Types.Decimal128, default: 0.0 },
   transactionHistory: [TransactionSchema],
+  cart: { type: mongoose.Schema.Types.ObjectId, ref: "Cart" }, // Reference to a single cart
 });
 
+// Hash the password before saving
 UserSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
   const salt = await bcrypt.genSalt(10);
@@ -27,5 +52,9 @@ UserSchema.pre("save", async function (next) {
   next();
 });
 
+// Create models
 const User = mongoose.model("User", UserSchema);
-module.exports = User;
+const Cart = mongoose.model("Cart", CartSchema);
+const Transaction = mongoose.model("Transaction", TransactionSchema);
+
+module.exports = { User, Cart, Transaction };

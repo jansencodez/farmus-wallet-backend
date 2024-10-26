@@ -1,6 +1,6 @@
 // api/cart/[userId]/update.js
 import connectDB from "../../../config/db";
-import Cart from "../../../models/Cart";
+import { Cart } from "../../../models/user";
 
 export default async function handler(req, res) {
   const { id: userId } = req.query;
