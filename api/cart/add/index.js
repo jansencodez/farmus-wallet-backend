@@ -1,6 +1,6 @@
 import connectDB from "../../../config/db";
 import Cart from "../../../models/Cart";
-import User from "../../../models/User"; // Ensure case matches your file name
+import User from "../../../models/user"; // Ensure case matches your file name
 
 export default async function handler(req, res) {
   const { id: userId } = req.query; // Use `id` as per your query parameter
