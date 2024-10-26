@@ -5,34 +5,40 @@ import Product from "../../models/Product";
 import mongoose from "mongoose";
 
 export default async function handler(req, res) {
-  const userId = req.query.id;
+  const { id: userId } = req.query;
 
-  if (!userId) {
+  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
     return res
       .status(400)
-      .json({ success: false, message: "User ID is required" });
+      .json({ success: false, message: "Invalid or missing User ID" });
   }
 
-  await connectDB();
+  try {
+    await connectDB();
+  } catch (error) {
+    console.error("Database connection error:", error.message);
+    return res
+      .status(500)
+      .json({ success: false, message: "Database connection failed" });
+  }
 
   if (req.method === "GET") {
     try {
-      // Convert userId to ObjectId
+      // Convert userId to ObjectId for the query
       const cart = await Cart.findOne({
-        userId: mongoose.Types.ObjectId(userId),
+        userId: new mongoose.Types.ObjectId(userId),
       }).populate("items.productId");
 
-      // Check if the cart was found
       if (!cart) {
         return res
           .status(404)
           .json({ success: false, message: "Cart not found" });
       }
 
-      const { items } = cart; // Destructure items for response
+      const { items } = cart;
       res.status(200).json({ success: true, items });
     } catch (error) {
-      console.error("Error retrieving cart:", error.message); // Log only the error message
+      console.error("Error retrieving cart:", error.message);
       res
         .status(500)
         .json({ success: false, message: "Error retrieving cart" });
