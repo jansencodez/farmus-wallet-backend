@@ -2,7 +2,7 @@ import connectDB from "../../../config/db";
 import Cart from "../../../models/Cart";
 
 export default async function handler(req, res) {
-  const { userId } = req.query;
+  const { id: userId } = req.query; // Use `id` as per your query parameter
 
   await connectDB();
 

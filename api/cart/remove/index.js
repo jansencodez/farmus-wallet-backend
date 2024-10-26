@@ -3,7 +3,7 @@ import connectDB from "../../../config/db";
 import Cart from "../../../models/Cart";
 
 export default async function handler(req, res) {
-  const { userId } = req.query;
+  const { id: userId } = req.query;
   const { itemId } = req.body;
 
   await connectDB();
