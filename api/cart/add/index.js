@@ -1,5 +1,6 @@
 import connectDB from "../../../config/db";
-import { Cart, User } from "../../../models/user";
+import Cart from "../../../models/Cart"; // Ensure you're importing the correct Cart model
+import User from "../../../models/User"; // Ensure you're importing the correct User model
 
 export default async function handler(req, res) {
   const { id: userId } = req.query; // Use `id` as per your query parameter
@@ -12,11 +13,12 @@ export default async function handler(req, res) {
       console.log("Incoming data:", { productId, quantity, price }); // Log incoming data
 
       // Find the user
-      const user = await User.findById(userId).populate("cart"); // Populate cart if exists
+      const user = await User.findById(userId); // Don't populate cart here
       let cart;
 
-      // If no cart exists for the user, create one
+      // Check if the user already has a cart
       if (!user.cart) {
+        // Create a new cart if it doesn't exist
         cart = new Cart({ items: [] });
         await cart.save();
 
@@ -24,7 +26,8 @@ export default async function handler(req, res) {
         user.cart = cart._id;
         await user.save();
       } else {
-        cart = user.cart; // Use the existing cart
+        // Find the existing cart
+        cart = await Cart.findById(user.cart); // Fetch the cart document using the cart ID
       }
 
       // Check if the item already exists in the cart
