@@ -12,26 +12,25 @@ export default async function handler(req, res) {
       console.log("Incoming data:", { productId, quantity, price }); // Log incoming data
 
       // Find the user
-      const user = await User.findById(userId); // Don't populate cart here
+      const user = await User.findById(userId).populate("cart"); // Populate cart if exists
       let cart;
 
-      // Check if the user already has a cart
+      // If no cart exists for the user, create one
       if (!user.cart) {
-        // Create a new cart if it doesn't exist
-        cart = new Cart({ items: [] });
+        // Create a new cart and associate it with the user
+        cart = new Cart({ userId: user._id, items: [] });
         await cart.save();
 
         // Update the user with the cart ID
         user.cart = cart._id;
         await user.save();
       } else {
-        // Find the existing cart
-        cart = await Cart.findById(user.cart); // Fetch the cart document using the cart ID
+        cart = user.cart; // Use the existing cart
       }
 
       // Check if the item already exists in the cart
       const existingItem = cart.items.find(
-        (item) => item.product.toString() === productId
+        (item) => item.productId.toString() === productId
       );
 
       if (existingItem) {
@@ -39,7 +38,7 @@ export default async function handler(req, res) {
         existingItem.quantity += quantity;
       } else {
         // If it doesn't exist, add a new item
-        cart.items.push({ product: productId, quantity, price });
+        cart.items.push({ productId, quantity, price });
       }
 
       // Save the updated cart back to the database
