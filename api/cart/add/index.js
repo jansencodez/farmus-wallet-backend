@@ -1,6 +1,5 @@
 import connectDB from "../../../config/db";
-import Cart from "../../../models/Cart"; // Ensure you're importing the correct Cart model
-import User from "../../../models/User"; // Ensure you're importing the correct User model
+import { Cart, User } from "../../../models/user";
 
 export default async function handler(req, res) {
   const { id: userId } = req.query; // Use `id` as per your query parameter
