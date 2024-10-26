@@ -10,14 +10,19 @@ export default async function handler(req, res) {
     try {
       const { productId, quantity } = req.body;
 
-      const cart = await Cart.findOneAndUpdate(
-        { userId },
-        {
-          $addToSet: { items: { productId, quantity } },
-          $setOnInsert: { userId }, // Set userId only if the document is new
-        },
-        { new: true, upsert: true }
-      );
+      // Find the cart for the user
+      let cart = await Cart.findOne({ userId });
+
+      // If no cart exists for the user, create one
+      if (!cart) {
+        cart = new Cart({ userId, items: [] });
+      }
+
+      // Add the new item to the cart
+      cart.items.push({ productId, quantity });
+
+      // Save the cart back to the database
+      await cart.save();
 
       res.status(201).json(cart);
     } catch (error) {
